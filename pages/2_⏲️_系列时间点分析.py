@@ -250,8 +250,13 @@ for i,uploaded_file in enumerate(uploaded_files):
 
     if file_format =='dcm':
         ds=pydicom.dcmread(BytesIO(bytes_data))
-        voxel_area = ds.PixelSpacing[0] * ds.PixelSpacing[1] * 4 / 100
-        print(ds.pixel_array.max(),ds.pixel_array.min())
+        try:
+            voxel_area = ds.PixelSpacing[0] * ds.PixelSpacing[1] * 4 / 100
+        except:
+            voxel_area = 999
+            if not hasattr(ds, 'PixelSpacing'):
+                st.error("Error: PixelSpacing not found. The result may not be correct.")
+        # print(ds.pixel_array.max(),ds.pixel_array.min())
         ds.save_as(r"./temp.dcm")
 
         image = preprocess_dcm(r"./temp.dcm")
@@ -334,7 +339,7 @@ SATI=[results[f"SATI_{i}"] for i in range(num)]
 VATI=[results[f"VATI_{i}"] for i in range(num)]
 SMI=[results[f'SMI_{i}'] for i in range(num)]
 df_results=pd.DataFrame({'id':id,'period':period,'height':heights,'SATA':SATA,'VATA':VATA,'SMA':SMA,'SATI':SATI,'VATI':VATI,'SMI':SMI})
-@st.cache
+@st.cache_data
 def convert_df(df):
     # IMPORTANT: Cache the conversion to prevent computation on every rerun
     return df.to_csv().encode('utf-8')

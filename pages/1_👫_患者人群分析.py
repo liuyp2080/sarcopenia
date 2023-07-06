@@ -2,8 +2,8 @@ import streamlit as st
 import os
 import torch.nn as nn
 import torch
-from monai.data import ITKReader,PILReader
-from monai.transforms import (Compose,LoadImage,Resize,EnsureChannelFirst,ScaleIntensityRange,ToTensor,Rotate)
+from monai.data import ITKReader
+from monai.transforms import (Compose,LoadImage,Resize,ScaleIntensityRange,ToTensor)
 import numpy as np
 import matplotlib.pyplot as plt
 import pydicom
@@ -250,9 +250,15 @@ for i,uploaded_file in enumerate(uploaded_files):
 
     if file_format =='dcm':
         ds=pydicom.dcmread(BytesIO(bytes_data))
-        voxel_area = ds.PixelSpacing[0] * ds.PixelSpacing[1] * 4 / 100
-        print(ds.PixelSpacing[0], ds.PixelSpacing[1])
+        print(uploaded_file.name)#在控制台打印，用于查看出错的图片
+        try:
+            voxel_area = ds.PixelSpacing[0] * ds.PixelSpacing[1] * 4 / 100
+        # print(ds.PixelSpacing[0], ds.PixelSpacing[1])
         # print(ds.pixel_array.max(),ds.pixel_array.min())
+        except:
+            voxel_area = 999
+            if not hasattr(ds, 'PixelSpacing'):
+                st.error("Error: PixelSpacing not found. The result may not be correct.")
         ds.save_as(r"./temp.dcm")
 
         image = preprocess_dcm(r"./temp.dcm")
@@ -332,7 +338,7 @@ SATI=[results[f"SATI_{i}"] for i in range(num)]
 VATI=[results[f"VATI_{i}"] for i in range(num)]
 SMI=[results[f'SMI_{i}'] for i in range(num)]
 df_results=pd.DataFrame({'id':id,'height':height,'SATA':SATA,'VATA':VATA,'SMA':SMA,'SATI':SATI,'VATI':VATI,'SMI':SMI})
-@st.cache
+@st.cache_data
 def convert_df(df):
     # IMPORTANT: Cache the conversion to prevent computation on every rerun
     return df.to_csv().encode('utf-8')
