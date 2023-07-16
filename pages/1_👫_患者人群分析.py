@@ -252,7 +252,7 @@ for i,uploaded_file in enumerate(uploaded_files):
         ds=pydicom.dcmread(BytesIO(bytes_data))
         print(uploaded_file.name)#在控制台打印，用于查看出错的图片
         try:
-            voxel_area = ds.PixelSpacing[0] * ds.PixelSpacing[1] * 4 / 100
+            voxel_area = ds.PixelSpacing[0] * ds.PixelSpacing[1] *(ds.Columns/256)*(ds.Rows/256) / 100
         # print(ds.PixelSpacing[0], ds.PixelSpacing[1])
         # print(ds.pixel_array.max(),ds.pixel_array.min())
         except:

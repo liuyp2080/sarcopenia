@@ -251,7 +251,7 @@ for i,uploaded_file in enumerate(uploaded_files):
     if file_format =='dcm':
         ds=pydicom.dcmread(BytesIO(bytes_data))
         try:
-            voxel_area = ds.PixelSpacing[0] * ds.PixelSpacing[1] * 4 / 100
+            voxel_area = ds.PixelSpacing[0] * ds.PixelSpacing[1] * (ds.Columns/256)*(ds.Rows/256) / 100
         except:
             voxel_area = 999
             if not hasattr(ds, 'PixelSpacing'):
