@@ -219,9 +219,9 @@ with col1:
     uploaded_files=st.file_uploader(label='请选择CT图片（可多选）',accept_multiple_files=True)
 with col2:
     height=st.number_input('患者身高(m)：',0.00,3.00,value=1.7)
-    st.write('非dicomCT图像，请输入：')
-    pixel_h = st.number_input('体素_H(mm)：', 0.7)
-    pixel_w = st.number_input('体素_W(mm)：', 0.7)
+#     st.write('非dicomCT图像，请输入：')
+#     pixel_h = st.number_input('体素_H(mm)：', 0.7)
+#     pixel_w = st.number_input('体素_W(mm)：', 0.7)
 
 preprocess= Compose([
     Resize([256,256]),
@@ -298,10 +298,10 @@ for i,uploaded_file in enumerate(uploaded_files):
         col1,col2=st.columns([0.5,0.5])#[]is the ratio of two columns
         with col1:
             results[f'period_{i}']=st.number_input('随访时间',value=0,key=f'period_{i}')
-            if voxel_area == 0:
-                voxel_area = pixel_h * pixel_w*4/100
-                results[f'pixel_h_{i}']=pixel_h
-                results[f'pixel_w_{i}']=pixel_w
+            # if voxel_area == 0:
+            #     voxel_area = pixel_h * pixel_w*4/100
+            #     results[f'pixel_h_{i}']=pixel_h
+            #     results[f'pixel_w_{i}']=pixel_w
             results[f"voxel_{i}"]=voxel_area
 
 

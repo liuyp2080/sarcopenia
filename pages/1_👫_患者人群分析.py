@@ -209,7 +209,7 @@ model.eval()
 st.set_page_config(page_title='CT图像计算骨骼肌脂肪指数APP', page_icon=None, layout="centered", initial_sidebar_state="auto", menu_items=None)
 st.header('👫_患者人群分析')
 st.write("说明：")
-st.write("建议使用dicom格式的图像，如上传非Dicom格式图片，请确保CT窗口为[-175,250]")
+st.write("使用dicom格式的图像进行分析。")
 st.write("本APP适用于分析不同患者相同时间点的CT图像，获取患者的脂肪、肌肉指数，并形成表格，为多种情况下了解同类患者人群脂肪肌肉指数变化提供参考。")
 
 "----"
@@ -217,10 +217,10 @@ st.header('输入区')
 col1,col2=st.columns([0.6,0.4])
 with col1:
     uploaded_files=st.file_uploader(label='请选择CT图片（可多选）',accept_multiple_files=True)
-with col2:
-    st.write('非dicomCT图像，请输入：')
-    pixel_h = st.number_input('体素_H(mm)：', value=0.7)
-    pixel_w = st.number_input('体素_W(mm)：', value=0.7)
+# with col2:
+#     st.write('非dicomCT图像，请输入：')
+#     pixel_h = st.number_input('体素_H(mm)：', value=0.7)
+#     pixel_w = st.number_input('体素_W(mm)：', value=0.7)
 preprocess= Compose([
     Resize([256,256]),
     ScaleIntensityRange( a_min=0, a_max=256, b_min=0, b_max=1, clip=True),
@@ -300,10 +300,10 @@ for i,uploaded_file in enumerate(uploaded_files):
         col1,col2=st.columns([0.5,0.5])#[]is the ratio of two columns
         with col1:
             results[f"h_{i}"]=st.number_input('患者身高(m)：',0.00,3.00,value=1.7,key=f"h_{i}")
-            if voxel_area == 0:
-                voxel_area = pixel_h * pixel_w*4/100
-                results[f'pixel_h_{i}']=pixel_h
-                results[f'pixel_w_{i}']=pixel_w
+            # if voxel_area == 0:
+            #     voxel_area = pixel_h * pixel_w*4/100
+            #     results[f'pixel_h_{i}']=pixel_h
+            #     results[f'pixel_w_{i}']=pixel_w
             results[f"voxel_{i}"]=voxel_area
         with col2:
             SATA=(mask.numpy()==1).sum()*results[f"voxel_{i}"]
