@@ -209,7 +209,7 @@ model.eval()
 st.set_page_config(page_title='CT图像计算骨骼肌脂肪指数APP', page_icon='⏲️',layout="centered", initial_sidebar_state="auto", menu_items=None)
 st.header(':timer_clock:系列时间点分析')
 st.write("说明：")
-st.write("建议使用dicom格式的图像，如上传非Dicom格式图片，请确保CT窗口为[-175,250]")
+st.write("仅支持dicom格式的图像。")
 st.write("本APP适用于分析同一个患者不同时间点的CT图像，获取不同时间点的脂肪/肌肉指数，并绘制趋势图，为多种情况下评估患者病情随时间的变化提供参考。")
 
 "----"
