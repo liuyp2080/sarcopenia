@@ -214,7 +214,7 @@ st.write("本APP适用于分析不同患者相同时间点的CT图像，获取�
 
 "----"
 st.header('输入区')
-col1,col2=st.columns([0.6,0.4])
+col1,col2=st.columns([0.8,0.2])
 with col1:
     uploaded_files=st.file_uploader(label='请选择CT图片（可多选）',accept_multiple_files=True)
 # with col2:
