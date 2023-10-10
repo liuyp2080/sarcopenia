@@ -14,3 +14,4 @@ streamlit
 itk
 plotly
 statsmodels
+pingouin
