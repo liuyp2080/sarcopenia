@@ -201,7 +201,7 @@ class build_resunetplusplus(nn.Module):
         return output
 
 model = build_resunetplusplus(1, 4).to("cpu")
-checkpoint = torch.load("sarcopenia.pth",map_location=torch.device('cpu') )
+checkpoint = torch.load("sarcopenia_57_0.pth",map_location=torch.device('cpu') )
 model.load_state_dict(checkpoint['state_dict'])
 model.eval()
 
@@ -222,13 +222,13 @@ with col1:
 #     pixel_h = st.number_input('体素_H(mm)：', value=0.7)
 #     pixel_w = st.number_input('体素_W(mm)：', value=0.7)
 preprocess= Compose([
-    Resize([256,256]),
+    # Resize([256,256]),
     ScaleIntensityRange( a_min=0, a_max=256, b_min=0, b_max=1, clip=True),
     ToTensor()])
 
 preprocess_dcm= Compose([
     LoadImage(dtype=np.float32, image_only=True,reader=ITKReader(reverse_indexing=True)),
-    Resize([256,256]),
+    # Resize([256,256]),
     ScaleIntensityRange( a_min=-175, a_max=250, b_min=0, b_max=1, clip=True),
     ToTensor()])
 
@@ -252,9 +252,8 @@ for i,uploaded_file in enumerate(uploaded_files):
         ds=pydicom.dcmread(BytesIO(bytes_data))
         print(uploaded_file.name)#在控制台打印，用于查看出错的图片
         try:
-            voxel_area = ds.PixelSpacing[0] * ds.PixelSpacing[1] *(ds.Columns/256)*(ds.Rows/256) / 100
+            voxel_area = ds.PixelSpacing[0] * ds.PixelSpacing[1] *(ds.Columns/ds.Rows) / 100
         # print(ds.PixelSpacing[0], ds.PixelSpacing[1])
-        # print(ds.pixel_array.max(),ds.pixel_array.min())
         except:
             voxel_area = 999
             if not hasattr(ds, 'PixelSpacing'):
