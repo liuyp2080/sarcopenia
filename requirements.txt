@@ -13,3 +13,4 @@ pylibjpeg-rle==1.3.0
 streamlit
 itk
 plotly
+statsmodels
