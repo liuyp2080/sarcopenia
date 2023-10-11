@@ -18,7 +18,7 @@ model.eval()
 #ST用户界面 
 st.set_page_config(page_title='Body Composition Measurement Tool', page_icon='👫', layout="centered", initial_sidebar_state="auto", menu_items=None)
 st.header('👫 Population Analysis')
-st.warning('''
+st.write('''
 **Instructions:**\n
 Just support ***dicom*** format CT images.\n
 This module is suitable for analyzing CT images of different patients at the same time point, obtaining the fat and muscle indices of patients, and forming a table to provide reference for understanding the changes of fat muscle index in similar patient populations under various circumstances
