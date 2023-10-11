@@ -13,6 +13,7 @@ from io import BytesIO
 import statsmodels.api as sm
 import pingouin as pg
 from sar_model import build_resunetplusplus
+from scipy import stats
  
 #ST用户界面 
 st.set_page_config(page_title='Body Composition Measurement Tool', page_icon='📈',layout="centered", initial_sidebar_state="auto", menu_items=None)
@@ -77,13 +78,6 @@ with torch.no_grad():
 result_model_df=pd.DataFrame(result_model)
 result_final=pd.merge(result_df,result_model_df,on="id",how="inner")
 
-if not result_final.empty:
-    icc_data=pd.melt(result_final.iloc[:,1:],id_vars=['sma_hand','vata_hand','sata_hand'],var_name='model',value_name='rating')
-    for id in ['sma_model','vata_model','sata_model']:
-        data=icc_data[icc_data['model']==id]
-        print(data)
-        icc_value=pg.intraclass_corr(data,targets='sma_hand',raters='model',ratings='rating')
-        print(icc_value)
 st.header("Plots and Sheets")
 @st.cache_data
 def convert_df(df):
@@ -104,15 +98,34 @@ sata_check=st.checkbox(label='Drawing Bland-Altman plot for SATA')
 if sata_check:
     data1=result_final['sata_hand']
     data2=result_final['sata_model']
-
+    
+    result = stats.ttest_rel(data1, data2)
+    # 提取统计结果
+    t_statistic = result.statistic
+    p_value = result.pvalue
+    st.write('The result of pairwise ***t*** test:')
+    col1,col2=st.columns([0.5,0.5])
+    col1.metric(label='t statistic', value=round(t_statistic,3))
+    col2.metric(label='p value', value=round(p_value,3))
+    
     f, ax = plt.subplots(1)
     sm.graphics.mean_diff_plot(data1, data2, ax = ax)
     st.pyplot(f)
+
 
 sma_check=st.checkbox(label='Drawing Bland-Altman plot for SMA')
 if sma_check:
     data1=result_final['sma_hand']
     data2=result_final['sma_model']
+    result = stats.ttest_rel(data1, data2)
+    # 提取统计结果
+    t_statistic = result.statistic
+    p_value = result.pvalue
+    st.write('The result of pairwise ***t*** test:')
+    col1,col2=st.columns([0.5,0.5])
+    col1.metric(label='t statistic', value=round(t_statistic,3))
+    col2.metric(label='p value', value=round(p_value,3))
+    
     f, ax = plt.subplots(1)
     sm.graphics.mean_diff_plot(data1, data2, ax = ax)
     st.pyplot(f)
@@ -123,6 +136,15 @@ if vata_check:
     data1=result_final['vata_hand']
     data2=result_final['vata_model']
 
+    result = stats.ttest_rel(data1, data2)
+    # 提取统计结果
+    t_statistic = result.statistic
+    p_value = result.pvalue
+    st.write('The result of pairwise ***t*** test:')
+    col1,col2=st.columns([0.5,0.5])
+    col1.metric(label='t statistic', value=round(t_statistic,3))
+    col2.metric(label='p value', value=round(p_value,3))
+    
     f, ax = plt.subplots(1)
     sm.graphics.mean_diff_plot(data1, data2, ax = ax)
     st.pyplot(f)
