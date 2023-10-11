@@ -23,7 +23,7 @@ st.warning('''
 Just support ***dicom*** format CT images.\n
 This module is suitable for analyzing CT images of different patients at the same time point, obtaining the fat and muscle indices of patients, and forming a table to provide reference for understanding the changes of fat muscle index in similar patient populations under various circumstances
 **The Substractions:** \n
-SATA:subcutaneous adipose tissue area; VATA:visceral adipose tissue area; MSA:muscle area
+SATA: subcutaneous adipose tissue area; VATA: visceral adipose tissue area; MSA: muscle area
 ''')
 
 "----"
