@@ -1,6 +1,7 @@
 import streamlit as st
 import os
 import torch.nn as nn
+import torch.nn.functional as F#新增
 import torch
 from monai.data import ITKReader
 from monai.transforms import (Compose,LoadImage,Resize,ScaleIntensityRange,ToTensor)
@@ -40,6 +41,10 @@ preprocess_dcm= Compose([
     LoadImage(dtype=np.float32, image_only=True,reader=ITKReader(reverse_indexing=True)),
     ScaleIntensityRange( a_min=-175, a_max=250, b_min=0, b_max=1, clip=True),
     ToTensor()])
+preprocess_dcm_raw= Compose([
+    LoadImage(dtype=np.float32, image_only=True,reader=ITKReader(reverse_indexing=True)),
+    # Resize([256,256]),
+    ToTensor()])#新增
 
 from io import BytesIO
 from PIL import Image
@@ -69,6 +74,9 @@ for i,uploaded_file in enumerate(uploaded_files):
         ds.save_as(r"./temp.dcm")
 
         image = preprocess_dcm(r"./temp.dcm")
+        image_raw=preprocess_dcm_raw(r"./temp.dcm")#新增
+        image_raw=image_raw.squeeze(0)#新增
+
         os.remove(r"./temp.dcm")
         img_array = image.numpy().squeeze(0)
         img_array = img_array * 255
@@ -97,6 +105,22 @@ for i,uploaded_file in enumerate(uploaded_files):
         if not os.path.exists('./mask'):
             os.mkdir('./mask')
         plt.imsave("./mask/mask_{}.png".format(uploaded_file.name.split('.')[0]),mask)
+        #mask to onehot
+        mask_one_hot = F.one_hot(mask, num_classes=4)
+
+        #calculate CT value for each mask
+        #SAT
+        mask_SAT=mask_one_hot[:,:,1]
+        SAT=image_raw*mask_SAT
+        SAT_CT_value=SAT.sum()/mask_SAT.sum()
+        #VAT
+        mask_VAT = mask_one_hot[:, :, 2]
+        VAT=image_raw*mask_VAT
+        VAT_CT_value=VAT.sum()/mask_VAT.sum()
+        #SMA
+        mask_SMA = mask_one_hot[:, :, 3]
+        SMA=image_raw*mask_SMA
+        SMA_CT_value=SMA.sum()/mask_SMA.sum()
 
     with col2:
         st.write('Mask')
@@ -118,6 +142,7 @@ for i,uploaded_file in enumerate(uploaded_files):
             SATI=SATA/(results[f"h_{i}"]*results[f"h_{i}"])
             VATI=VATA/(results[f"h_{i}"]*results[f"h_{i}"])
             SMI=SMA/(results[f"h_{i}"]*results[f"h_{i}"])
+            
 
             results[f'SATA_{i}']=SATA
             results[f"VATA_{i}"]=VATA
@@ -125,6 +150,9 @@ for i,uploaded_file in enumerate(uploaded_files):
             results[f"SATI_{i}"]=SATI
             results[f"VATI_{i}"]=VATI
             results[f'SMI_{i}']=SMI
+            results[f'SAT_CT_{i}']=SAT_CT_value
+            results[f'VAT_CT_{i}']=VAT_CT_value
+            results[f'SMA_CT_{i}']=SMA_CT_value
 
             st.latex(f"SATA,cm^2:{'{:.3f}'.format(results[f'SATA_{i}'])}")
             st.latex(f"VATA,cm^2:{'{:.3f}'.format(results[f'VATA_{i}'])}")
@@ -132,6 +160,9 @@ for i,uploaded_file in enumerate(uploaded_files):
             st.latex(f"SATI,cm^2/m:{'{:.3f}'.format(results[f'SATI_{i}'])}")
             st.latex(f"VATI,cm^2/m:{'{:.3f}'.format(results[f'VATI_{i}'])}")
             st.latex(f"SMI,cm^2/m:{'{:.3f}'.format(results[f'SMI_{i}'])}")
+            st.latex(f"SAT_CT,cm^2:{'{:.3f}'.format(results[f'SAT_CT_{i}'])}")
+            st.latex(f"VAT_CT,cm^2:{'{:.3f}'.format(results[f'VAT_CT_{i}'])}")
+            st.latex(f"SMA_CT,cm^2:{'{:.3f}'.format(results[f'SMA_CT_{i}'])}")
     num+=1
     file_name.append(uploaded_file.name.split('.')[0])
 #
@@ -143,7 +174,10 @@ SMA=[results[f'SMA_{i}'] for i in range(num)]
 SATI=[results[f"SATI_{i}"] for i in range(num)]
 VATI=[results[f"VATI_{i}"] for i in range(num)]
 SMI=[results[f'SMI_{i}'] for i in range(num)]
-df_results=pd.DataFrame({'id':id,'height':height,'SATA':SATA,'VATA':VATA,'SMA':SMA,'SATI':SATI,'VATI':VATI,'SMI':SMI})
+SAT_CT=[results[f'SAT_CT_{i}'] for i in range(num)]
+VAT_CT=[results[f'VAT_CT_{i}'] for i in range(num)]
+SMA_CT=[results[f'SMA_CT_{i}'] for i in range(num)]
+df_results=pd.DataFrame({'id':id,'height':height,'SATA':SATA,'VATA':VATA,'SMA':SMA,'SATI':SATI,'VATI':VATI,'SMI':SMI,'SAT_CT':SAT_CT,'VAT_CT':VAT_CT,'SMA_CT':SMA_CT})
 @st.cache_data
 def convert_df(df):
     # IMPORTANT: Cache the conversion to prevent computation on every rerun
@@ -154,7 +188,7 @@ csv = convert_df(df_results)
 import plotly.express as px
 st.header('Plots and Sheets')
 with st.container():
-    plot_results=pd.melt(df_results,id_vars=['id'],value_vars=['SATA','VATA','SMA','SATI','VATI','SMI'],var_name='variables',value_name='value')
+    plot_results=pd.melt(df_results,id_vars=['id'],value_vars=['SATA','VATA','SMA','SATI','VATI','SMI','SAT_CT','VAT_CT','SMA_CT'],var_name='variables',value_name='value')
     fig=px.box(plot_results,x='variables',y='value',color='variables',points='all')
     fig.update_layout(showlegend=False)
     st.plotly_chart(fig,use_container_width=True)
