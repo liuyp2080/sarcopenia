@@ -6,8 +6,10 @@ st.set_page_config(
     page_title="Index",
     page_icon=":house:",
 )
-
+          
 st.success("# Welcome 👋")
+st.subheader('感谢大家一直以来的支持和喜爱! 为了项目的可持续发展，现APP使用采用合作模式，合作形式灵活，欢迎大家洽谈合作!📱请联系张医生18112000370（微信同名）。')
+st.divider()   
 st.info('''
          **APP Introduction**\n
          This app was designed to help clinicians and researchers better identify and quantify changes in body fat and muscle.\n
@@ -34,6 +36,8 @@ with col5:
         np.random.randn(5,3),
         columns=['id','VATA','...'])
     st.table(df)
+
+st.video('demo.mp4')
 
 st.markdown(
     """
