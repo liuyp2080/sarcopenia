@@ -11,7 +11,7 @@ pylibjpeg-libjpeg==1.3.4
 pylibjpeg-openjpeg==1.3.2
 pylibjpeg-rle==1.3.0
 streamlit
-itk
+itk== 5.4.0
 plotly
 statsmodels
 pingouin
