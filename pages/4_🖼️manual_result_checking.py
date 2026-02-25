@@ -24,7 +24,7 @@ def check_password():
         """Form with widgets to collect user information"""
         with st.form("Credentials"):
             st.text_input("Username", key="username")
-            st.text_input("Password", type="passwords", key="passwords")
+            st.text_input("Password", type="password", key="password")
             st.form_submit_button("Log in", on_click=password_entered)
 
     def password_entered():
@@ -139,4 +139,5 @@ if clear_button:
         os.remove(os.path.join('./mask_temp', file))
     for file in os.listdir('./image_temp'):
         os.remove(os.path.join('./image_temp', file))
+
 
