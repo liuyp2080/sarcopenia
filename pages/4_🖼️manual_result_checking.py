@@ -17,47 +17,47 @@ import streamlit as st
 
 st.set_page_config(page_title='Body Composition Measurement Tool', page_icon='🖼️',layout="centered", initial_sidebar_state="auto", menu_items=None)
 
-def check_password():
-    """Returns `True` if the user had a correct password."""
+# def check_password():
+#     """Returns `True` if the user had a correct password."""
 
-    def login_form():
-        """Form with widgets to collect user information"""
-        with st.form("Credentials"):
-            st.text_input("Username", key="username")
-            st.text_input("Password", type="password", key="password")
-            st.form_submit_button("Log in", on_click=password_entered)
+#     def login_form():
+#         """Form with widgets to collect user information"""
+#         with st.form("Credentials"):
+#             st.text_input("Username", key="username")
+#             st.text_input("Password", type="password", key="password")
+#             st.form_submit_button("Log in", on_click=password_entered)
 
-    def password_entered():
-        """Checks whether a password entered by the user is correct."""
-        if st.session_state["username"] in st.secrets[
-            "passwords"
-        ] and hmac.compare_digest(
-            st.session_state["passwords"],
-            st.secrets.passwords[st.session_state["username"]],
-        ):
-            st.session_state["password_correct"] = True
-            del st.session_state["passwords"]  # Don't store the username or password.
-            del st.session_state["username"]
-        else:
-            st.session_state["password_correct"] = False
+#     def password_entered():
+#         """Checks whether a password entered by the user is correct."""
+#         if st.session_state["username"] in st.secrets[
+#             "passwords"
+#         ] and hmac.compare_digest(
+#             st.session_state["passwords"],
+#             st.secrets.passwords[st.session_state["username"]],
+#         ):
+#             st.session_state["password_correct"] = True
+#             del st.session_state["passwords"]  # Don't store the username or password.
+#             del st.session_state["username"]
+#         else:
+#             st.session_state["password_correct"] = False
 
-    # Return True if the username + password is validated.
-    if st.session_state.get("password_correct", False):
-        return True
+#     # Return True if the username + password is validated.
+#     if st.session_state.get("password_correct", False):
+#         return True
 
-    # Show inputs for username + password.
-    login_form()
-    if "password_correct" in st.session_state:
-        st.error("😕 User not known or password incorrect")
-    return False
+#     # Show inputs for username + password.
+#     login_form()
+#     if "password_correct" in st.session_state:
+#         st.error("😕 User not known or password incorrect")
+#     return False
 
 
-if not check_password():
-    st.stop()
+# if not check_password():
+#     st.stop()
 
-# Main Streamlit app starts here
-st.write("Here goes your normal Streamlit app...")
-st.button("Click me")
+# # Main Streamlit app starts here
+# st.write("Here goes your normal Streamlit app...")
+# st.button("Click me")
 
 
 
@@ -139,5 +139,6 @@ if clear_button:
         os.remove(os.path.join('./mask_temp', file))
     for file in os.listdir('./image_temp'):
         os.remove(os.path.join('./image_temp', file))
+
 
 
