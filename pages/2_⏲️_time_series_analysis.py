@@ -24,7 +24,7 @@ def check_password():
         """Form with widgets to collect user information"""
         with st.form("Credentials"):
             st.text_input("Username", key="username")
-            st.text_input("Password", type="passwords", key="passwords")
+            st.text_input("Password", type="password", key="password")
             st.form_submit_button("Log in", on_click=password_entered)
 
     def password_entered():
@@ -250,4 +250,5 @@ with st.container():
         mime='text/csv',
     )
     st.dataframe(df_results,use_container_width=True)
+
 
