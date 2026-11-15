@@ -1,6 +1,6 @@
 # Body Composition Measurement Tool
 monai==1.5.2
-pydicom==2.4.4
+pydicom==3.0.2
 numpy>=1.24,<3
 torch>=2.4.1
 itk>=5.3
