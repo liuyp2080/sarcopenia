@@ -1,3 +1,10 @@
+import sys
+
+# Block broken pylibjpeg C extensions (openjpeg/libjpeg/rle) on Streamlit Cloud
+# so that "import pydicom" does not crash.
+sys.modules['openjpeg'] = None
+sys.modules['libjpeg'] = None
+sys.modules['rle'] = None
 
 import pydicom
 import numpy as np
