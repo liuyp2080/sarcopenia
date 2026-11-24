@@ -2,7 +2,7 @@
 monai==1.5.2
 pydicom==3.0.2
 numpy>=1.24,<3
-torch>=2.4.1
+torch==2.4.1
 itk>=5.3
 streamlit>=1.30
 matplotlib>=3.8
